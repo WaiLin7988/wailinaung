@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Studio - Crafted with Intention</title>
+  <!-- Tailwind CSS Library -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- GSAP Core Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- GSAP ScrollTrigger Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Lenis for Smooth Scrolling -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+  <style>
+    /* Custom CSS Variables */
+    :root{
+      --main-nav-width: 80px;
+      --orange-block-color:#ff5c23;
+    }
+    
+    /* Base Body and Transitions */
+    body{ 
+      font-family:'Inter',sans-serif; 
+      background:#f7f3ed; 
+      color:#1a1a1a; 
+      min-height:100vh; 
+      transition: background-color 0.5s ease, color 0.5s ease; 
+    }
+    .hero-headline{ font-size:clamp(2rem,7.5vw + 1rem,6rem); line-height:.95; font-weight:800; }
+    
+    /* Left Nav Icon Base */
+    .left-nav-icon{ 
+      display:flex; align-items:center; justify-content:center; 
+      width:50px; height:50px; border-radius:12px; 
+      background:#f0eae4; color:#1a1a1a;
+      transition:background-color .5s,color .5s, transform .1s; 
+    }
+    .left-nav-icon:hover{ background:#e6e0da; transform:translateY(-2px); }
+    
+    .section-headline-large{ font-size: clamp(2rem,5vw + 1rem,4.5rem); line-height:1.05; font-weight:800; }
+
+    /* Utility class for inline elements with relative positioning for word animation */
+    .inline-block {
+        display: inline-block;
+    }
+    
+    /* CTA button's text color needs to adapt to the dark theme (Only applies to the main cta-button ID) */
+    .dark-theme #cta-button { color: #1a1a1a; } 
+
+    /* ===== DARK THEME STYLES (for Scroll-Triggered CTA section) ===== */
+    /* This section manages the background and text color change for the entire body */
+    .dark-theme{ background:#1a1a1a; color:#f7f3ed; }
+    .dark-theme #main-header, .dark-theme #mobile-menu { 
+      background:#1a1a1a; 
+      color:#f7f3ed; 
+      transition: background-color 0.5s ease, color 0.5s ease; 
+    }
+    .dark-theme #mobile-menu-button { color:#f7f3ed; } 
+    .dark-theme .left-nav-icon{ background:#2c2c2c; color:#f7f3ed; } 
+    .dark-theme .left-nav-icon:hover{ background:#444444; }
+    
+    
+    /* --- LOGO/LETTERING GALLERY CARD STYLES --- */
+    
+    .project {
+        position: relative;
+        padding-bottom: 30px; 
+        overflow: visible; 
+        border-radius: 30px; 
+        display: block; 
+    }
+    
+    /* Squircle Shape (Used only for Logo/Lettering galleries) */
+    .squircle {
+        position: relative; 
+        width: 100%;
+        aspect-ratio: 1/1; /* Default: Square */
+        border-radius: 30px; 
+        overflow: hidden;
+        z-index: 10; 
+    }
+
+    /* Default Light Card Colors */
+    .squircle-card {
+        background-color: #e8e4dc; 
+    }
+    .project-desc-light {
+        color: #4b5563;
+    }
+    
+    /* Dark Card Colors */
+    .squircle-card-dark { 
+        background-color: #2c2c2c; 
+    }
+    .project-desc-dark {
+        color: #cccccc; 
+    }
+
+    /* Thumbnail Styling for Inset Effect (Logo/Lettering) */
+    .thumbnail {
+        position: absolute; 
+        top: 14px; 
+        left: 14px; 
+        right: 14px; 
+        bottom: 14px; 
+        overflow: hidden;
+        border-radius: 20px; 
+        z-index: 20; 
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
+    }
+    .thumb {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: inherit; 
+    }
+    
+    /* SVG Corners Styling (Kept for Logo/Lettering) */
+    .corner {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+        z-index: 30; 
+    }
+    .corner-light {
+        fill: #f7f3ed; 
+        stroke: #1a1a1a; 
+        stroke-width: 1px;
+    }
+    .corner-dark {
+        fill: #1a1a1a; 
+        stroke: #f7f3ed; 
+        stroke-width: 1px;
+    }
+    .corner.tl { top: -1px; left: -1px; transform: rotate(0deg); }
+    .corner.tr { top: -1px; right: -1px; transform: rotate(90deg); }
+    .corner.bl { bottom: -1px; left: -1px; transform: rotate(270deg); }
+    .corner.br { bottom: -1px; right: -1px; transform: rotate(180deg); }
+    
+    /* Infos & Meta */
+    .infos { margin-top: 16px; }
+    .description {
+        font-size: 0.95rem; 
+        margin-top: 4px;
+        font-weight: 400;
+    }
+    
+    /* --- NEW ILLUSTRATION GALLERY STYLES --- */
+    /* .project class is still used for GSAP animation target */
+    .illustration-block {
+        width: 100%;
+        margin-bottom: 3rem; 
+        overflow: hidden;
+        position: relative; /* For positioning the title box */
+    }
+
+    /* Container for the 16:9 aspect ratio */
+    .illustration-ratio-box {
+        width: 100%;
+        /* 16:9 aspect ratio trick: 9 / 16 * 100% = 56.25% */
+        padding-bottom: 56.25%; 
+        position: relative;
+        background-color: #2c2c2c; /* Fallback dark background */
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Simple shadow for dark theme contrast */
+    }
+
+    .illustration-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Styles for the title overlay */
+    .illustration-title-overlay {
+        position: absolute;
+        top: 16px; /* Spacing from top */
+        left: 16px; /* Spacing from left */
+        z-index: 40;
+        padding: 6px 12px;
+        background-color: rgba(26, 26, 26, 0.4); /* Dark background with opacity */
+        color: #f7f3ed; /* Light text color */
+        font-size: 1.2rem; /* Small text size (sm: text-sm) */
+        font-weight: 600;
+        border-radius: 8px;
+        backdrop-filter: blur(8px); /* Blur effect */
+    }
+    
+    /* GSAP Initial States */
+    .project {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    
+    /* Override for illustration blocks to remove the extra padding bottom for descriptions */
+    #project-grid-illustration .project {
+        padding-bottom: 0px; 
+    }
+    
+    .split-text-word {
+        display: inline-block;
+        position: relative;
+    }
+
+  </style>
+</head>
+<body class="min-h-screen relative">
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="fixed top-0 left-0 w-full h-full bg-[#f7f3ed] z-50 transform -translate-x-full transition-transform duration-300 lg:hidden">
+    <!-- Close Button (ခလုတ်ပိတ်ရန်) -->
+    <div class="p-8 flex justify-end"><button onclick="toggleMenu()" class="text-4xl text-[#1a1a1a]">&times;</button></div>
+    <nav class="flex flex-col items-center justify-center space-y-8 text-3xl font-bold">
+      <!-- Links Updated for Folder Structure -->
+      <a href="../index.html" class="hover:text-[#ff6a00]">Home</a>
+      <a href="index.html" class="text-[#ff5c23]">Studio</a>
+      <a href="../about/index.html" class="hover:text-[#ff6a00]">About</a>
+      <a href="../contact/index.html" class="hover:text-[#ff6a00]">Contact</a>
+    </nav>
+  </div>
+
+  <header id="main-header" class="flex justify-end items-center p-6 md:p-8 fixed top-0 left-0 w-full bg-[#f7f3ed] z-40 transition-colors duration-500">
+    <!-- Mobile Menu Toggle Button -->
+    <button id="mobile-menu-button" onclick="toggleMenu()" class="lg:hidden p-2 transition-colors duration-500">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    </button>
+  </header>
+
+  <!-- Left nav (desktop) -->
+  <nav id="left-nav" class="fixed left-6 top-1/2 transform -translate-y-1/2 space-y-4 hidden lg:block z-50">
+    <!-- Home Link -->
+    <a href="../index.html" class="left-nav-icon"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 001 1h3m-6-11v11a1 1 0 01-1 1H8a1 1 0 01-1-1v-11"></path></svg></a>
+    <!-- Studio Link (Current Page) -->
+    <a href="index.html" class="left-nav-icon bg-[#cbcbcb]"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg></a>
+    <!-- Contact Link -->
+    <a href="../contact/index.html" class="left-nav-icon"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></a>
+  </nav>
+
+  <!-- MAIN CONTENT AREA (Light Theme) - Needs left margin for desktop nav -->
+  <main class="md:ml-[80px] p-6 md:p-12 lg:p-16 pt-[80px] md:pt-[100px]">
+    
+    <!-- Hero Section (အဓိက စာသားကဏ္ဍ) -->
+    <section id="hero-section" class="flex flex-col gap-12 lg:gap-24 mt-2 md:mt-8 lg:mt-12 items-center min-h-[70vh]">
+      <div class="w-full max-w-5xl mx-auto">
+        <!-- Big Heading - GSAP ဖြင့် ပေါ်လာမည် -->
+        <h1 id="hero-h1" class="hero-headline uppercase text-center">The Studio — Crafted with Intention</h1>
+        
+        <!-- Main Content (Paragraph Container) -->
+        <div id="paragraph-container" class="max-w-4xl text-xl md:text-3xl mt-12 md:mt-24 leading-relaxed font-medium mx-auto text-left">
+            <!-- GSAP Word-by-Word Fade Effect အတွက် ID ထည့်သွင်းထားသည် -->
+            <p id="word-fade-paragraph">
+                Design is more than making things look good — it’s about shaping how they feel and communicate. I create visuals that balance precision with personality, blending structure and spontaneity in every line, shape, and curve.
+            </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logo Gallery Section (အမှတ်တံဆိပ်လက်ရာများ ကဏ္ဍ - Light Theme) -->
+    <section id="logo-gallery" class="py-12 md:py-24 max-w-7xl mx-auto">
+        <!-- Gallery Header - GSAP ဖြင့် ပေါ်လာမည် (ScrollTrigger) -->
+        <h2 id="gallery-h2" class="section-headline-large text-center mb-16 md:mb-24">
+            Logo
+        </h2>
+        
+        <!-- GRID LAYOUT MODIFIED: Mobile/Tablet (2 columns), Desktop (4 columns) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8" id="project-grid-logo">
+            
+            <div class="block">
+                
+                    <article class="project" data-theme="light">
+                        <div class="squircle squircle-card">
+                            <!-- Outer Corners -->
+                            <svg class="corner tl corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner tr corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner bl corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner br corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            
+                            <!-- MOVED INSIDE: Thumbnail for Inset Effect -->
+                            <div class="thumbnail">
+                                <img alt="WeNB" class="thumb" loading="lazy" src="/images/logo/wenb.png">
+                            </div>
+                        </div>
+                        <div class="infos">
+                            <div>
+                                <h3 class="title text-xl font-bold mb-1">WeNB</h3>
+                            </div>
+                            <p class="description project-desc-light">
+                                A playful yet warm design created for a dessert brand that sells steamed milk banana. The logo features a banana icon, reflecting comfort, sweetness, and a nostalgic homemade feeling that connects with students and young people.
+                            </p>
+                        </div>
+                    </article>
+                
+            </div>
+
+            
+            <div class="block">
+                
+                    <article class="project" data-theme="light">
+                        <div class="squircle squircle-card">
+                            <!-- Outer Corners -->
+                            <svg class="corner tl corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner tr corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner bl corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner br corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            
+                            <!-- MOVED INSIDE: Thumbnail for Inset Effect -->
+                            <div class="thumbnail">
+                                <img alt="Vesper brand identity" class="thumb" loading="lazy" src="/images/logo/lg.png">
+                            </div>
+                        </div>
+                        <div class="infos">
+                            <div>
+                                <h3 class="title text-xl font-bold mb-1">LensGuard Pro</h3>
+                            </div>
+                            <p class="description project-desc-light">
+                               A clean and modern design for a contact lens brand. The blue color conveys clarity, trust, and eye freshness, while the contact lens icon highlights precision and eye care innovation.
+                            </p>
+                        </div>
+                    </article>
+                
+            </div>
+
+            <div class="block">
+                
+                    <article class="project" data-theme="light">
+                        <div class="squircle squircle-card">
+                            <!-- Outer Corners -->
+                            <svg class="corner tl corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner tr corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner bl corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner br corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+
+                            <!-- MOVED INSIDE: Thumbnail for Inset Effect -->
+                            <div class="thumbnail">
+                                <img alt="Lumen app design" class="thumb" loading="lazy" src="/images/logo/sm.png">
+                            </div>
+                        </div>
+                        <div class="infos">
+                            <div>
+                                <h3 class="title text-xl font-bold mb-1">SoleMate</h3>
+                            </div>
+                            <p class="description project-desc-light">
+                                a stylish and friendly design for an e-commerce shoe brand. The logo features a shoe icon, symbolizing comfort, confidence, and movement, perfectly representing a brand that connects people with their perfect pair.
+                            </p>
+                        </div>
+                    </article>
+               
+            </div>
+
+            <div class="block">
+               
+                    <article class="project" data-theme="light">
+                        <div class="squircle squircle-card">
+                            <!-- Outer Corners -->
+                            <svg class="corner tl corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner tr corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner bl corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            <svg class="corner br corner-light" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                            
+                            <!-- MOVED INSIDE: Thumbnail for Inset Effect -->
+                            <div class="thumbnail">
+                                <img alt="Astro digital identity" class="thumb" loading="lazy" src="/images/logo/yc.png">
+                            </div>
+                        </div>
+                        <div class="infos">
+                            <div>
+                                <h3 class="title text-xl font-bold mb-1">YouthCraze</h3>
+                            </div>
+                            <p class="description project-desc-light">
+                                A modern and energetic design for a boys’ fashion brand. The logo combines the letters Y and C, symbolizing youthful style, creativity, and confidence in every look.
+                            </p>
+                        </div>
+                    </article>
+             
+            </div>
+        </div>
+    </section>
+    
+  </main> 
+  
+  <!-- CTA Dark Section (Scroll-Triggered Dark Theme) - FULL WIDTH BACKGROUND -->
+  <section id="cta-dark-section" class="dark-theme py-24 md:py-48 min-h-[70vh] md:min-h-[50vh] flex flex-col justify-center items-center">
+    
+    <!-- LETTERING GALLERY SECTION (Dark Theme) -->
+    <div class="bg-[#1a1a1a] text-[#f7f3ed] py-12 md:py-24 w-full"> 
+      <!-- Inner container with the correct desktop margin/padding -->
+      <section id="lettering-gallery" class="max-w-7xl mx-auto md:ml-[80px] p-6 md:p-12 lg:p-16">
+          <!-- Gallery Header -->
+          <h2 id="lettering-h2" class="section-headline-large text-center mb-16 md:mb-24">
+              Lettering
+          </h2>
+          
+          <!-- GRID LAYOUT -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-8" id="project-grid-lettering">
+              
+              <!-- Card 1: A Land of Paradox -->
+              <div class="block">
+                  
+                      <article class="project" data-theme="dark">
+                          <div class="squircle squircle-card-dark">
+                              <!-- Outer Corners (Dark Theme) -->
+                              <svg class="corner tl corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner tr corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner bl corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner br corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              
+                              <div class="thumbnail">
+                                  <img alt="A Land of Paradox lettering" class="thumb" loading="lazy" src="/images/let/wyd.png">
+                              </div>
+                          </div>
+                          <div class="infos">
+                              <div>
+                                  <h3 class="title text-xl font-bold mb-1">A Land of Paradox</h3>
+                              </div>
+                              <p class="description project-desc-dark">
+This design captures Myanmar's conflicting realities. The two opposing arrows symbolize the nation's agonizing stalemate and deep conflict: the forceful push and pull between hope and oppression. It visualizes a country caught in a desperate deadlock.
+                              </p>
+                          </div>
+                      </article>
+                  
+              </div>
+
+              <!-- Card 2: Straw Fire -->
+              <div class="block">
+                 
+                      <article class="project" data-theme="dark">
+                          <div class="squircle squircle-card-dark">
+                              <!-- Outer Corners (Dark Theme) -->
+                              <svg class="corner tl corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner tr corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner bl corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner br corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              
+                              <div class="thumbnail">
+                                  <img alt="Straw Fire typography" class="thumb" loading="lazy" src="/images/let/strawfire.png">
+                              </div>
+                          </div>
+                          <div class="infos">
+                              <div>
+                                  <h3 class="title text-xl font-bold mb-1">Straw Fire</h3>
+                              </div>
+                              <p class="description project-desc-dark">
+                                  This design explores the fleeting nature of human vice or short-lived enthusiasm (a "straw fire"). It symbolizes intense, destructive energy that flares up brightly but quickly dies out, highlighting temporary outbursts of bad behavior or passion without lasting substance.
+                              </p>
+                          </div>
+                      </article>
+                 
+              </div>
+
+              <!-- Card 3: Single -->
+              <div class="block">
+                
+                      <article class="project" data-theme="dark">
+                          <div class="squircle squircle-card-dark">
+                              <!-- Outer Corners (Dark Theme) -->
+                              <svg class="corner tl corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner tr corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner bl corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner br corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+
+                              <div class="thumbnail">
+                                  <img alt="Single custom typeface" class="thumb" loading="lazy" src="/images/let/single.png">
+                              </div>
+                          </div>
+                          <div class="infos">
+                              <div>
+                                  <h3 class="title text-xl font-bold mb-1">Single</h3>
+                              </div>
+                              <p class="description project-desc-dark">
+                                 This design celebrates the power of solitude and independence. It connects being "Single" to absolute freedom—the unburdened state of making your own path. It embodies self-reliance, the clarity of an undivided focus, and the quiet strength found in personal, limitless choice.
+                              </p>
+                          </div>
+                      </article>
+                
+              </div>
+
+              <!-- Card 4: Love's Origin -->
+              <div class="block">
+                  
+                      <article class="project" data-theme="dark">
+                          <div class="squircle squircle-card-dark">
+                              <!-- Outer Corners (Dark Theme) -->
+                              <svg class="corner tl corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner tr corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner bl corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              <svg class="corner br corner-dark" viewBox="0 0 20 20"><path d="M0,20C0,4.7,4.7,0,20,0H0v20Z" vector-effect="non-scaling-stroke"></path></svg>
+                              
+                              <div class="thumbnail">
+                                  <img alt="Love's Origin calligraphic work" class="thumb" loading="lazy" src="/images/let/lo.png">
+                              </div>
+                          </div>
+                          <div class="infos">
+                              <div>
+                                  <h3 class="title text-xl font-bold mb-1">Love's Origin</h3>
+                              </div>
+                              <p class="description project-desc-dark">
+                                  A lettering artwork expressing the gentle beginning of affection. Each curve and stroke flows with warmth and emotion, symbolizing how love quietly takes root and blossoms from the heart.
+                              </p>
+                          </div>
+                      </article>
+                 
+              </div>
+          </div>
+      </section>
+  </div>
+
+    <!-- ILLUSTRATION GALLERY SECTION (NEW - Dark Theme) -->
+    <div class="bg-[#1a1a1a] text-[#f7f3ed] py-12 md:py-24 w-full"> 
+      <!-- Inner container with the correct desktop margin/padding -->
+      <section id="illustration-gallery" class="max-w-7xl mx-auto md:ml-[80px] p-6 md:p-12 lg:p-16">
+          <!-- Gallery Header -->
+          <h2 id="illustration-h2" class="section-headline-large text-center mb-16 md:mb-24">
+              Illustration
+          </h2>
+          
+          <!-- SIMPLE STACKED LAYOUT (max-w-5xl is for aesthetic spacing on large screens) -->
+          <div id="project-grid-illustration" class="space-y-12 max-w-5xl mx-auto">
+              
+              <!-- Image 1: The Lady -->
+              <div class="illustration-block project" data-theme="dark">
+                      <div class="illustration-ratio-box">
+                          <!-- Title Overlay -->
+                          <div class="illustration-title-overlay">The Lady</div>
+                          <img alt="The Lady" class="illustration-img" loading="lazy" src="/images/ill/lady.png">
+                      </div>
+              </div>
+
+              <!-- Image 2: Call Me by Your Name -->
+              <div class="illustration-block project" data-theme="dark">
+                      <div class="illustration-ratio-box">
+                          <!-- Title Overlay -->
+                          <div class="illustration-title-overlay">Call Me by Your Name</div>
+                          <img alt="Call Me by Your Name" class="illustration-img" loading="lazy" src="/images/ill/cmbyn.png">
+                      </div>
+              </div>
+
+              <!-- Image 3: Word of Honor -->
+              <div class="illustration-block project" data-theme="dark">
+                      <div class="illustration-ratio-box">
+                          <!-- Title Overlay -->
+                          <div class="illustration-title-overlay">Word of Honor</div>
+                          <img alt="Word of Honor" class="illustration-img" loading="lazy" src="/images/ill/WOH.png">
+                      </div>
+              </div>
+
+              <!-- Image 4: Helmet -->
+              <div class="illustration-block project" data-theme="dark">
+                      <div class="illustration-ratio-box">
+                          <!-- Title Overlay -->
+                          <div class="illustration-title-overlay">Conical Hat</div>
+                          <img alt="Helmet" class="illustration-img" loading="lazy" src="/images/ill/helmet.png">
+                      </div>
+              </div>
+          </div>
+      </section>
+  </div>
+    <div class="w-full md:ml-[80px] p-6 md:p-12 lg:p-16">
+        <div class="max-w-4xl text-center mx-auto">
+          <!-- CTA H2 - GSAP ဖြင့် ပေါ်လာမည် (ScrollTrigger) -->
+          <h2 id="cta-h2" class="hero-headline uppercase mb-10 md:mb-16">
+            Let's work together
+          </h2>
+          <!-- CTA Button - GSAP ဖြင့် ပေါ်လာမည် (ScrollTrigger) -->
+          <a id="cta-button" href="../contact/index.html" class="inline-block px-10 py-4 text-lg md:text-2xl font-bold rounded-full transition duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.01]" style="background:linear-gradient(135deg, #ff5c23, #ff8c23);">
+            Start a project &rarr;
+          </a>
+        </div>
+    </div>
+  </section>
+
+  <!-- Footer (အောက်ခြေမှတ်စု) -->
+  <footer class="p-6 md:p-8 text-sm opacity-50 text-center bg-[#1a1a1a] text-white">
+    &copy; 2025 The Studio. All rights reserved.
+  </footer>
+
+  <script>
+    // Toggle Mobile Menu
+    function toggleMenu(){ 
+      document.getElementById('mobile-menu').classList.toggle('-translate-x-full'); 
+    }
+
+    // Cache elements
+    const ctaDarkSection = document.getElementById('cta-dark-section');
+    const body = document.body;
+    
+    // Function to check scroll position and apply dark theme 
+    function checkThemeChange(){
+        if (!ctaDarkSection) return;
+
+        const rect = ctaDarkSection.getBoundingClientRect();
+        const triggerPoint = window.innerHeight * 0.7; 
+
+        // When the CTA section scrolls into view (hits the trigger point), 
+        // the entire body background is set to dark, covering the left fixed nav area.
+        if (rect.top <= triggerPoint) {
+            body.classList.add('dark-theme');
+        } else {
+            body.classList.remove('dark-theme');
+        }
+    }
+
+    // --- GSAP and Lenis Initialization ---
+    
+    gsap.registerPlugin(ScrollTrigger);
+
+    // 2. Lenis Smooth Scrolling Setup
+    const lenis = new Lenis();
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    gsap.ticker.add((time)=>{
+      lenis.raf(time * 1000)
+    });
+
+    gsap.ticker.lagSmoothing(0);
+
+
+    // --- Text Splitter Helpers ---
+
+    /**
+     * စာသားကို စာလုံးတစ်လုံးချင်းစီ ခွဲပြီး <span> tag နဲ့ ပတ်ပေးသည် (Hero Paragraph အတွက်)
+     * @param {HTMLElement} element - စာသားပါဝင်သည့် HTML element
+     */
+    function splitTextIntoWords(element) {
+        const text = element.textContent.trim();
+        // စာသားကို space တွေနဲ့ ခွဲပြီး စာလုံးတစ်လုံးချင်းစီကို <span> နဲ့ ပတ်ကာ ပြန်ပေါင်းထည့်သည်
+        element.innerHTML = text.split(/\s+/).map(word => {
+            // opacity: 0 သည် animation အတွက် အရေးကြီးသည်
+            return `<span class="inline-block" style="opacity: 0;">${word}</span>&nbsp;`;
+        }).join('');
+    }
+
+    /**
+     * စာသားကို စာလုံးတစ်လုံးချင်းစီ ခွဲပြီး GSAP bounce effect အတွက် ပြင်ဆင်သည်
+     * @param {HTMLElement} element - စာသားပါဝင်သည့် HTML element (h3.title or p.description)
+     * @param {string} className - စာလုံးများအတွက် CSS class
+     */
+    function splitElementTextForBounce(element, className) {
+        if (!element) return;
+        const text = element.textContent.trim();
+        // စာသားကို space တွေနဲ့ ခွဲပြီး စာလုံးတစ်လုံးချင်းစီကို <span> နဲ့ ပတ်ကာ ပြန်ပေါင်းထည့်သည်
+        element.innerHTML = text.split(/\s+/).map(word => {
+            // initial hidden state ကို inline style ဖြင့် ထည့်သွင်းထားသည်
+            // opacity 0, y 20px ကို GSAP က set လုပ်ပေးမှာဖြစ်လို့ style ထဲကထုတ်လိုက်ပါမယ်
+            return `<span class="${className} split-text-word">${word}</span>&nbsp;`;
+        }).join('');
+    }
+    
+    // --- GSAP Animation Setups ---
+
+    /**
+     * စာလုံးတစ်လုံးချင်းစီပေါ်လာစေရန် GSAP ScrollTrigger Animation ကို သတ်မှတ်သည် (Hero Paragraph)
+     */
+    function setupWordFadeAnimation() {
+        const paragraph = document.getElementById('word-fade-paragraph');
+        if (!paragraph) return;
+
+        // စာသားကို animation မလုပ်ခင် ခွဲထုတ်လိုက်သည်
+        splitTextIntoWords(paragraph);
+
+        const words = paragraph.querySelectorAll('span');
+
+        gsap.to(words, {
+            opacity: 1,
+            y: 0,
+            stagger: 0.015, // စာလုံးတစ်လုံးနဲ့ တစ်လုံးကြား အချိန်ခြားနားမှု
+            ease: "power1.out",
+            scrollTrigger: {
+                trigger: paragraph,
+                start: "top 85%", 
+                end: "bottom 40%", 
+                scrub: 1.5, // scroll လုပ်တိုင်း animation က လိုက်ပါလာစေရန် 
+            }
+        });
+    }
+
+    /**
+     * Card တစ်ခုချင်းစီကို Scroll လုပ်ရာမှာ Master Timeline ဖြင့် Sequential Pop-up Animation သတ်မှတ်သည်
+     * ဒီ function ဟာ Logo Gallery၊ Lettering Gallery နဲ့ Illustration Gallery သုံးခုလုံးကို ကိုင်တွယ်ပါမယ်။
+     */
+    function setupCardRevealAnimations() {
+        // Card container ကို initial state ပြန်သတ်မှတ်သည်
+        gsap.set(".project", { opacity: 0, y: 20 });
+        gsap.set(".split-text-word", { opacity: 0, y: 20 }); // Bounce effect အတွက် စာလုံးများရဲ့ အစအခြေအနေ
+        
+        // Gallery Grid Containers သုံးခုလုံးကို ရှာပါ 
+        const gridContainers = ["#project-grid-logo", "#project-grid-lettering", "#project-grid-illustration"];
+
+        gridContainers.forEach((gridSelector) => {
+            // Illustration Gallery အတွက် project-grid-illustration ကို သီးခြားကိုင်တွယ်သည်
+            const isIllustration = gridSelector === "#project-grid-illustration";
+            const projects = gsap.utils.toArray(`${gridSelector} .project`);
+
+            if (projects.length === 0) return;
+
+            // Master Timeline ကို Grid Container တစ်ခုချင်းစီအတွက် သီးခြားဖန်တီးသည်
+            const tlMaster = gsap.timeline({
+                scrollTrigger: {
+                    trigger: gridSelector, // Grid Container ကို trigger လုပ်သည်
+                    start: "top 80%", // Container ရဲ့ထိပ်က viewport ရဲ့ 80% ကို ရောက်ရင် စသည်
+                    toggleActions: "play none none none", // တစ်ခါပဲ ကစားမည်
+                    // markers: true // Debugging အတွက်
+                }
+            });
+
+            projects.forEach((project, index) => {
+                
+                // Illustration Gallery မှလွဲ၍ အခြား Gallery များအတွက်သာ Title/Description Animation ကို လုပ်ဆောင်သည်
+                if (!isIllustration) {
+                    const title = project.querySelector(".title");
+                    const description = project.querySelector(".description");
+                    
+                    splitElementTextForBounce(title, 'title-word');
+                    splitElementTextForBounce(description, 'desc-word');
+                    
+                    const titleWords = project.querySelectorAll('.title-word');
+                    const descWords = project.querySelectorAll('.desc-word');
+                    
+                    const cardStartTime = index * 0.3; 
+                    
+                    // A. Animate the main card container (Image part)
+                    tlMaster.to(project, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "power3.out",
+                    }, cardStartTime); 
+
+                    // B. Animate Title Words
+                    tlMaster.to(titleWords, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.4,
+                        stagger: 0.05, 
+                        ease: "back.out(1.7)" 
+                    }, cardStartTime); 
+
+                    // C. Animate Description Words 
+                    tlMaster.to(descWords, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.4,
+                        stagger: 0.015, 
+                        ease: "back.out(1.7)" 
+                    }, cardStartTime + 0.1); 
+                } else {
+                    // Illustration Gallery အတွက် ပုံကတ်သက်သက်ကိုသာ animation လုပ်သည်
+                    const cardStartTime = index * 0.3; 
+
+                    tlMaster.to(project, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "power3.out",
+                    }, cardStartTime); 
+                }
+            });
+        });
+    }
+
+
+    /**
+     * Hero Section နှင့် CTA Section ခေါင်းစဉ်နှင့် ခလုတ် animation များ
+     */
+    function setupHeaderAndCtaAnimations() {
+        // Hero H1 Reveal
+        gsap.from("#hero-h1", {
+            y: 50,
+            opacity: 0,
+            duration: 1.2,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#hero-section",
+                start: "top 95%",
+            }
+        });
+        
+        // Gallery H2 Reveal - Logo
+        gsap.from("#gallery-h2", {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#logo-gallery",
+                start: "top 90%",
+            }
+        });
+
+        // Gallery H2 Reveal - Lettering
+        gsap.from("#lettering-h2", {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#lettering-gallery",
+                start: "top 90%",
+            }
+        });
+
+        // Gallery H2 Reveal - Illustration 
+        gsap.from("#illustration-h2", {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#illustration-gallery",
+                start: "top 90%",
+            }
+        });
+
+        // CTA H2 Reveal
+        gsap.from("#cta-h2", {
+            x: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: "#cta-dark-section",
+                start: "top 80%",
+            }
+        });
+        
+        // CTA Button Reveal
+        gsap.from("#cta-button", {
+            x: -50,
+            opacity: 0,
+            duration: 1,
+            delay: 0.2, 
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: "#cta-dark-section",
+                start: "top 80%",
+            }
+        });
+    }
+
+    // Combined scroll handler
+    const handleScroll = () => {
+        checkThemeChange(); 
+    };
+
+    // Initialize all GSAP animations and handlers
+    const run = () => { 
+        handleScroll(); 
+
+        if (!document.body.classList.contains('initialized-gsap')) {
+            setupWordFadeAnimation(); 
+            setupHeaderAndCtaAnimations(); 
+            setupCardRevealAnimations(); 
+            document.body.classList.add('initialized-gsap');
+        }
+    };
+
+    // Events
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', run);
+    window.addEventListener('load', run);
+    
+    run();
+  </script>
+</body>

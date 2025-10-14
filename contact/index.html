@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Get in Touch - Wai Lin Aung</title>
+    <!-- Tailwind CSS CDN for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Lucide Icons for social links -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom CSS Variables for color consistency */
+        :root{
+            --orange-block-color:#ff5c23;
+            --dark-background:#1a1a1a;
+            --light-text:#f7f3ed;
+            --dark-input-bg:#2c2c2c;
+            --light-input-border:#2c2c2c;
+            /* Nav Variables from original template */
+            --main-nav-width: 80px; 
+        }
+        
+        /* Base Dark Theme Style for the entire page */
+        body { 
+            font-family:'Inter', sans-serif; 
+            background: var(--dark-background); 
+            color: var(--light-text); 
+            min-height: 100vh;
+        }
+
+        /* Large headline style */
+        .section-headline-large { 
+            font-size: clamp(2rem, 5vw + 1rem, 4.5rem); 
+            line-height: 1.05; 
+            font-weight: 800; 
+        }
+
+        /* Fixed Header Styles (Adapted for dark theme only) */
+        #main-header {
+            background: var(--dark-background); 
+            color: var(--light-text); 
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        /* Mobile menu background (matches main background) */
+        #mobile-menu {
+             background: var(--dark-background); 
+             color: var(--light-text); 
+        }
+
+        /* Left Nav Icon Base (Adapted for dark theme only) */
+        .left-nav-icon{ 
+            display:flex; align-items:center; justify-content:center; 
+            width:50px; height:50px; border-radius:12px; 
+            background:var(--dark-input-bg); color:var(--light-text);
+            transition:background-color .5s,color .5s, transform .1s; 
+        }
+        .left-nav-icon:hover{ 
+            background: #444444; 
+            transform: translateY(-2px); 
+        }
+
+        /* Custom Form Styles for Dark Theme */
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--light-input-border); /* Dark border */
+            border-radius: 0.75rem; /* Rounded corners */
+            background: var(--dark-input-bg); /* Dark background */
+            color: var(--light-text);
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--orange-block-color);
+            box-shadow: 0 0 0 2px rgba(255, 92, 35, 0.4);
+        }
+        textarea.form-input { 
+            min-height: 150px; 
+            resize: vertical; 
+        }
+        
+        /* Social Icon Style (Used for direct connect section too) */
+        .social-icon {
+            display: flex; align-items: center; justify-content: center; 
+            width: 50px; height: 50px; border-radius: 12px; 
+            background: var(--dark-input-bg); color: var(--light-text);
+            transition: background-color .3s, transform .1s; 
+        }
+        .social-icon:hover { 
+            background: #444444; 
+            transform: translateY(-2px); 
+        }
+        
+        /* Utility to ensure Lucide icons are visible */
+        .text-f7f3ed { color: #f7f3ed; } 
+    </style>
+</head>
+<body>
+    <!-- Mobile menu (Hidden by default, slides in) -->
+    <div id="mobile-menu" class="fixed top-0 left-0 w-full h-full z-50 transform -translate-x-full transition-transform duration-300 lg:hidden">
+        <div class="p-8 flex justify-end"><button onclick="toggleMenu()" class="text-4xl text-white">&times;</button></div>
+        <nav class="flex flex-col items-center justify-center space-y-8 text-3xl font-bold">
+            <!-- Example links for mobile menu -->
+            <a href="../home/index.html" class="hover:text-[var(--orange-block-color)]">Home</a>
+            <a href="../studio/index.html" class="hover:text-[var(--orange-block-color)]">Studio</a>
+            <a href="#contact" class="text-[var(--orange-block-color)]">Contact</a>
+        </nav>
+    </div>
+
+    <!-- Fixed Header (Only contains the mobile menu button on small screens) -->
+    <header id="main-header" class="flex justify-end items-center p-6 md:p-8 fixed top-0 left-0 w-full z-40 transition-colors duration-500">
+        <button id="mobile-menu-button" onclick="toggleMenu()" class="lg:hidden p-2 transition-colors duration-500">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </header>
+
+    <!-- Left nav (desktop) -->
+    <nav id="left-nav" class="fixed left-6 top-1/2 transform -translate-y-1/2 space-y-4 hidden lg:block z-50">
+        <!-- Home -->
+        <a href="../home/index.html" class="left-nav-icon"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 001 1h3m-6-11v11a1 1 0 01-1 1H8a1 1 0 01-1-1v-11"></path></svg></a>
+        <!-- Studio -->
+        <a href="../studio/index.html" class="left-nav-icon"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg></a>
+        <!-- Contact (Active state) -->
+        <a href="#contact" class="left-nav-icon"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></a>
+    </nav>
+
+    <!-- Main Content Wrapper (Adjusted spacing for fixed navs) -->
+    <main class="md:ml-[80px] p-6 md:p-12 lg:p-16 pt-[120px] md:pt-[140px]">
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="pb-12 md:pb-24">
+            <div class="max-w-5xl mx-auto">
+                <!-- Page Title / Get in Touch -->
+                <h2 class="section-headline-large uppercase mb-6 md:mb-8 text-center">Get in Touch</h2>
+                
+                <!-- Short Intro Paragraph -->
+                <p class="text-lg md:text-2xl max-w-2xl mx-auto text-center font-medium opacity-80 mb-16 md:mb-24">
+                    I’m always open to collaboration, freelance work, or creative discussions. Send a message, or connect with me directly.
+                </p>
+
+                <div class="flex flex-col lg:flex-row gap-12 lg:gap-16">
+                    
+                    <!-- Contact Form -->
+                    <div class="lg:w-2/3">
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Name Input -->
+                                <div>
+                                    <label for="name" class="block text-sm font-semibold mb-2 opacity-70">Name</label>
+                                    <input type="text" id="name" name="name" class="form-input" placeholder="Your Name" required>
+                                </div>
+                                <!-- Email Input -->
+                                <div>
+                                    <label for="email" class="block text-sm font-semibold mb-2 opacity-70">Email Address</label>
+                                    <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required>
+                                </div>
+                            </div>
+                            <!-- Subject Input -->
+                            <div>
+                                <label for="subject" class="block text-sm font-semibold mb-2 opacity-70">Subject</label>
+                                <input type="text" id="subject" name="subject" class="form-input" placeholder="Project Proposal or Hello" required>
+                            </div>
+                            <!-- Message Textarea -->
+                            <div>
+                                <label for="message" class="block text-sm font-semibold mb-2 opacity-70">Message</label>
+                                <textarea id="message" name="message" class="form-input" placeholder="Tell me about your idea..." required></textarea>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <button type="submit" class="w-full inline-block px-10 py-4 text-lg md:text-xl font-bold rounded-full transition duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.01]" style="background:linear-gradient(135deg, #ff5c23, #ff8c23); color:var(--dark-background);">
+                                Send Message
+                            </button>
+                            <p id="form-message" class="mt-4 text-sm text-center text-green-400 hidden">Thank you for your message! I'll get back to you soon.</p>
+                        </form>
+                    </div>
+
+                    <!-- Direct Contact Info & Social Media -->
+                    <div class="lg:w-1/3 space-y-12 lg:mt-6">
+                        
+                        <!-- Direct Connect -->
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-extrabold border-b border-gray-700 pb-3 opacity-90 mb-6">Direct Connect</h3>
+                            
+                            <!-- Email Address (clickable mailto: link) -->
+                            <div class="flex items-center space-x-4">
+                                <div class="p-3 rounded-full flex-shrink-0" style="background:var(--orange-block-color);">
+                                    <i data-lucide="mail" class="w-6 h-6 text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm opacity-70">Email Address</p>
+                                    <a href="mailto:wailinaung7988@example.com" class="text-lg font-bold hover:text-[var(--orange-block-color)] transition-colors">wailinaung7988@example.com</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Media -->
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-extrabold border-b border-gray-700 pb-3 opacity-90 mb-6">Social Media</h3>
+
+                            <!-- Social Links -->
+                            <div class="flex space-x-6">
+                                <!-- LinkedIn -->
+                                <a href="https://www.linkedin.com/in/wai-lin-aung-b14175313" target="_blank" class="left-nav-icon" aria-label="LinkedIn Profile">
+                                    <i data-lucide="linkedin" class="w-6 h-6 text-f7f3ed"></i>
+                                </a>
+                                <!-- Instagram -->
+                                <a href="https://www.instagram.com/wai_lin_aung13" target="_blank" class="left-nav-icon" aria-label="Instagram Profile">
+                                    <i data-lucide="instagram" class="w-6 h-6 text-f7f3ed"></i>
+                                </a>
+                                <!-- Facebook (Using external-link icon as Facebook is not a standard Lucide icon) -->
+                                <a href="https://www.facebook.com/share/1Dusu6s1wV/" target="_blank" class="left-nav-icon" aria-label="Facebook Profile">
+                                    <i data-lucide="facebook" class="w-6 h-6 text-f7f3ed"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="p-6 md:p-8 text-sm opacity-50 text-center border-t border-gray-800">
+        &copy; 2025 Wai Lin Aung. All rights reserved.
+    </footer>
+
+    <script>
+        // Function to toggle the mobile menu visibility
+        function toggleMenu(){ 
+            document.getElementById('mobile-menu').classList.toggle('-translate-x-full'); 
+        }
+
+        // Initialize Lucide icons on load
+        function initializeIcons() {
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+        }
+        window.addEventListener('load', initializeIcons);
+
+        // Client-side form submission handler (for simulation)
+        const contactForm = document.getElementById('contact-form');
+        const formMessage = document.getElementById('form-message');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Show success message and reset form after a short delay
+                formMessage.classList.remove('hidden');
+                contactForm.reset();
+                
+                // Hide the message after 3 seconds
+                setTimeout(() => {
+                    formMessage.classList.add('hidden');
+                }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
